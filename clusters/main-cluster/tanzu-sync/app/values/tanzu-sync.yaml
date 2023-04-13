@@ -1,0 +1,7 @@
+---
+git:
+  url: git@github.com:tsalm-vmware/tap-gitops-install-emea.git
+  ref: origin/main
+  sub_path: clusters/main-cluster/cluster-config
+tap_package_repository:
+  oci_repository: 377668981663.dkr.ecr.eu-central-1.amazonaws.com/tap-images

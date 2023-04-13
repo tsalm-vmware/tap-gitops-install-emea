@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ingress-internal-class-name-overlay
+  namespace: tap-install
+type: Opaque
+stringData:
+  ingress-internal-class-name-overlay.yaml: |
+    #@ load("@ytt:data", "data")
+    #@ load("@ytt:overlay", "overlay")
+
+    #@overlay/match by=overlay.subset({"metadata":{"name":"contour","namespace":"tanzu-system-ingress-internal"}, "kind": "Deployment"})
+    ---
+    spec:
+      template:
+        spec:
+          containers:
+          #@overlay/match by=overlay.subset({"name": "contour"})
+          - args:
+            #@overlay/append
+            - --ingress-class-name=internal
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ingress-internal-envoy-service-type-overlay
+  namespace: tap-install
+type: Opaque
+stringData:
+  ingress-internal-envoy-service-type-overlay.yaml: |
+    #@ load("@ytt:overlay", "overlay")
+
+    #@overlay/match by=overlay.subset({"metadata":{"name":"envoy","namespace":"tanzu-system-ingress-internal"}, "kind": "Service"})
+    ---
+    spec:
+      #@overlay/match missing_ok=True
+      type: ClusterIP
+      #@overlay/remove
+      externalTrafficPolicy: {}
+---
+apiVersion: v1    
+kind: Secret
+metadata:
+  name: ingress-internal-fix-multiple-instances-overlay
+  namespace: tap-install
+type: Opaque
+stringData:
+  ingress-internal-fix-multiple-instances-overlay.yaml: |
+    #@ load("@ytt:overlay", "overlay")
+
+    #@ crd1 = overlay.subset({"metadata":{"name":"tlscertificatedelegations.projectcontour.io"}, "kind": "CustomResourceDefinition"})
+    #@ crd2 = overlay.subset({"metadata":{"name":"extensionservices.projectcontour.io"}, "kind": "CustomResourceDefinition"})
+    #@ crd3 = overlay.subset({"metadata":{"name":"httpproxies.projectcontour.io"}, "kind": "CustomResourceDefinition"})
+    #@ crd4 = overlay.subset({"metadata":{"name":"contourdeployments.projectcontour.io"}, "kind": "CustomResourceDefinition"})
+    #@ crd5 = overlay.subset({"metadata":{"name":"contourconfigurations.projectcontour.io"}, "kind": "CustomResourceDefinition"})
+
+    #@ cluster_role1 = overlay.subset({"metadata":{"name":"envoy"}, "kind": "ClusterRole"})
+    #@ cluster_role2 = overlay.subset({"metadata":{"name":"contour"}, "kind": "ClusterRole"})
+
+    #@overlay/match by=overlay.or_op(crd1, crd2, crd3, crd4, crd5, cluster_role1, cluster_role2), expects="1+"
+    ---
+    #@overlay/remove
+    ---
+    #@overlay/match by=overlay.subset({"metadata":{"name":"contour"}, "kind": "ClusterRoleBinding"})
+    ---
+    metadata:
+    #@overlay/match missing_ok=True
+    name: contour-internal
+    subjects:
+    #@overlay/match by=overlay.subset({"name": "contour"})
+    - kind: ServiceAccount
+      #@overlay/match missing_ok=True
+      namespace: tanzu-system-ingress-internal
+    ---
+    #@overlay/match by=overlay.subset({"metadata":{"name":"envoy"}, "kind": "ClusterRoleBinding"})
+    ---
+    metadata:
+    #@overlay/match missing_ok=True
+    name: envoy-internal
+    subjects:
+    #@overlay/match by=overlay.subset({"name": "envoy"})
+    - kind: ServiceAccount
+      #@overlay/match missing_ok=True
+      namespace: tanzu-system-ingress-internal

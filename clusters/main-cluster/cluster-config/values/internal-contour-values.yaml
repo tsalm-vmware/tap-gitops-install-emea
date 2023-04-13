@@ -1,0 +1,9 @@
+---
+internal-contour:
+  values:
+    envoy:
+      hostPorts:
+        enable: false
+      service:
+        type: NodePort
+    namespace: tanzu-system-ingress-internal

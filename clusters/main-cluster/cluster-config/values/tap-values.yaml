@@ -1,0 +1,37 @@
+tap_install:
+  values:
+    profile: full
+    ceip_policy_disclosed: true
+    shared:
+      ingress_domain: emea.end2end.link
+      ingress_issuer: letsencrypt-contour-cluster-issuer
+      image_registry:
+        project_path: harbor.emea.end2end.link/tap
+    supply_chain: testing_scanning
+    ootb_supply_chain_testing_scanning:
+      gitops:
+        server_address: https://github.com/
+        repository_owner: tsalm-pivotal
+        repository_name: tap-gitops
+        branch: prod
+        ssh_secret: git-https
+        commit_strategy: pull_request
+        pull_request:
+          server_kind: github
+          pull_request_title: Approval for Production deployment
+          pull_request_body: Please review the configuration and approve the deployment to production
+          commit_branch: ""
+    buildservice:
+      disable_smart_warmer: true
+      kp_default_repository: 377668981663.dkr.ecr.eu-central-1.amazonaws.com/tap-build-service
+      kp_default_repository_aws_iam_role_arn: arn:aws:iam::377668981663:role/tap-build-service
+    contour:
+      envoy:
+        service:
+          annotations:
+            external-dns.alpha.kubernetes.io/hostname: '*.emea.end2end.link'
+    cnrs:
+      domain_template: '{{.Name}}-{{.Namespace}}.{{.Domain}}'
+      ingress:
+        internal:
+          namespace: tanzu-system-ingress-internal

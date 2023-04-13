@@ -13,6 +13,3 @@ secrets:
         ssh_known_hosts:
           key: dev/emea-tap/tanzu-sync/sync-git-ssh
           property: ssh-knownhosts
-      install_registry_dockerconfig:
-        dockerconfigjson:
-          key: dev/emea-tap/tanzu-sync/install-registry-dockerconfig

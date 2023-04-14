@@ -1,0 +1,14 @@
+---
+certificate:
+  secrets:
+    eso:
+      aws:
+        region: eu-central-1
+        certificate_secrets:
+          role_arn: arn:aws:iam::377668981663:role/emea-tap--certificate-secrets
+      remote_refs:
+        certificate_sensitive_values:
+          sensitive_certificate_route53_access_key_secret:
+            key: dev/emea-tap/tap/certificate-sensitive-access-key-secret
+          sensitive_certificate_route53_access_key_id:
+            key: dev/emea-tap/tap/certificate-sensitive-access-key-id

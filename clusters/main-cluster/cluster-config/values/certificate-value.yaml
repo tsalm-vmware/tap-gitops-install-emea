@@ -1,0 +1,10 @@
+certificate:
+  values:
+    secret_name: contour-tls-delegation-cert
+    namespace: tanzu-system-ingress
+    issuer:
+      email: tsalm@vmware.com
+      route53:
+        region: eu-central-1
+        hostedZoneID: Z04147751VKC48IKUQS06
+        role: "arn:aws:iam::377668981663:role/EmeaE2EDemoHostedZoneChanger"

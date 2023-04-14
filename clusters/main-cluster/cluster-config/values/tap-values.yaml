@@ -25,11 +25,6 @@ tap_install:
       disable_smart_warmer: true
       kp_default_repository: 377668981663.dkr.ecr.eu-central-1.amazonaws.com/tap-build-service
       kp_default_repository_aws_iam_role_arn: arn:aws:iam::377668981663:role/tap-build-service
-    contour:
-      envoy:
-        service:
-          annotations:
-            external-dns.alpha.kubernetes.io/hostname: '*.emea.end2end.link'
     cnrs:
       domain_template: '{{.Name}}-{{.Namespace}}.{{.Domain}}'
       ingress:

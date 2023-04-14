@@ -1,0 +1,17 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: certificate-sensitive-values
+  namespace: #@ data.values.certificate.values.namespace
+spec:
+  secretStoreRef:
+    name: tap-install-secrets
+    kind: SecretStore
+  refreshInterval: "1m"
+  data:
+    - secretKey: issuer-route53-access-key-secret
+      remoteRef: #@ data.values.certificate.secrets.eso.remote_refs.certificate_sensitive_values.sensitive_certificate_route53_access_key_secret
+    - secretKey: issuer-route53-access-key-id
+      remoteRef: #@ data.values.certificate.secrets.eso.remote_refs.certificate_sensitive_values.sensitive_certificate_route53_access_key_id

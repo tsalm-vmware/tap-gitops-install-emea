@@ -1,0 +1,12 @@
+#@ load("@ytt:data", "data")
+---
+apiVersion: projectcontour.io/v1
+kind: TLSCertificateDelegation
+metadata:
+  name: certificate-delegation
+  namespace: #@ data.values.certificate.values.namespace
+spec:
+  delegations:
+    - secretName: #@ data.values.certificate.values.secret_name
+      targetNamespaces:
+        - "*"
